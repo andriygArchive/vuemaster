@@ -1,3 +1,7 @@
+if (!eventBus) {
+    var eventBus = new Vue()
+}
+
 Vue.component('product', {
     template: `
       <div class="product">
@@ -27,18 +31,7 @@ Vue.component('product', {
               :class="{ disabledButton: !inStock }">Add to Cart</button>
               <button @click="removeFromCart(id)">-</button>
           </p>
-          <h3>Reviews</h3>
-          <p v-if="!reviews.length">No reviews submitted</p>
-          <ul>
-              <li v-for="review in reviews">
-                <p>Name: {{ review.name }}</p>
-                <p v-if="review.review">Review: {{ review.review }}</p>
-                <p>Rating: {{ review.rating }}</p>
-                <p v-if="review.recommend == 'yes'">Recommend product</p>
-                <p v-else>Does not recommend product</p>
-              </li>
-          </ul>
-          <product-review @review-submitted="reviewSubmitted"/>
+          <product-tabs :reviews="reviews"></product-tabs>
         </div>
       </div>
     `,
@@ -91,11 +84,14 @@ Vue.component('product', {
         updateProduct(selectedVariant) {
             this.selectedVariant = selectedVariant
         },
-
-        reviewSubmitted(review) {
-            this.reviews.push(review)
-        }
     },
+
+    mounted() {
+        eventBus.$on('review-submitted', review => {
+            this.reviews.push(review)
+        })
+    },
+
     computed: {
         title() {
             return this.brand + " " + this.product;

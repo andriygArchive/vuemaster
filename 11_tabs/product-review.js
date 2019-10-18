@@ -1,3 +1,6 @@
+if (!eventBus) {
+    var eventBus = new Vue()
+}
 Vue.component('product-review', {
     template: `
     <form class="review-form" @submit.prevent="onSubmit" xmlns="http://www.w3.org/1999/html">
@@ -59,7 +62,7 @@ Vue.component('product-review', {
                 rating: this.rating,
                 recommend: this.recommend,
             }
-            this.$emit("review-submitted", review)
+            eventBus.$emit("review-submitted", review)
             this.name = null
             this.review = null
             this.rating = 0
